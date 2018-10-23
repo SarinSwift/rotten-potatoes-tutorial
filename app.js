@@ -4,18 +4,37 @@ var exphbs = require('express-handlebars');
 const express = require('express')
 const app = express()
 
-// mock array of movies
-let reviews = [
-    { title: "Great review", movieTitle: "Titanic" },
-    { title: "Awesome movie", movieTitle: "Interstellar" }
-]
+// initialize mongoose
+const mongoose = require('mongoose');
+// connect to our database that is named after our app
+mongoose.connect('mongodb://localhost/rotten-potatoes');
+
+// model is capitalized and singular (models are stored on the database)
+const Review = mongoose.model('Review', {
+  title: String,
+  movieTitle: String
+});
+
+// // mock array of movies
+// let reviews = [
+//     { title: "Great review", movieTitle: "Titanic" },
+//     { title: "Awesome movie", movieTitle: "Interstellar" },
+//     { title: "Poor quality", movieTitle: "Life of Pie" }
+// ]
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-// we're sending the mock array as an object in the template { reviews: reviews }
+// we're using the database with the model: Review
 app.get('/', (req, res) => {
-    res.render('reviews-index', { reviews: reviews });
+    // .find() returns a Promise
+    Review.find()
+     .then(reviews => {
+         res.render('reviews-index', { reviews: reviews });
+     })
+     .catch(err => {
+         console.log(err);
+     })
 })
 
 app.get('/', (req, res) => {
