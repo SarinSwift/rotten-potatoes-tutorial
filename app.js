@@ -16,7 +16,8 @@ mongoose.connect('mongodb://localhost/rotten-potatoes');
 const Review = mongoose.model('Review', {
   title: String,
   movieTitle: String,
-  description: String
+  description: String,
+  rating: Number
 });
 
 // // mock array of movies
