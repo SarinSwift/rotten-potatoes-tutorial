@@ -1,0 +1,31 @@
+<!-- views/reviews-new.handlebars -->
+
+<!-- has attribute called action that has a value equal to the path -->
+<!-- /reviews is the route to our create action that will be added to our server  -->
+<form method="POST" action="/reviews">
+    <fieldset>
+        <legend>New Review</legend>
+
+        <!-- TITLE -->
+        <p>
+            <label for="title">Title</label><br>
+            <input type="text" name="title" />
+        </p>
+        <!-- MOVIE TITLE -->
+        <p>
+            <label for="movieTitle">Movie Title</label><br>
+            <input type="text" name="movieTitle" />
+        </p>
+        <!-- DESCRIPTION -->
+        <p>
+            <label for="description-text">Description</label><br>
+            <textarea id="description-text" name="description" rows="10" /></textarea>
+        </p>
+    </fieldset>
+
+    <!-- BUTTON -->
+    <p>
+        <button type="submit">Save review</button>
+    </p>
+
+</form>
