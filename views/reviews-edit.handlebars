@@ -1,0 +1,13 @@
+<!-- views/reviews-edit.handlebars -->
+
+<form methods="POST" action="/reviews/{{review._id}}?_method=PUT">
+
+    <!-- DRY code -->
+    {{> reviews-form}}
+
+    <!-- BUTTON -->
+    <p>
+        <button type="submit">Save Review</button>
+    </p>
+
+</form>

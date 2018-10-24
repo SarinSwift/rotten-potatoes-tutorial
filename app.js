@@ -2,10 +2,15 @@
 var exphbs = require('express-handlebars');
 
 const express = require('express')
+const methodOverride = require('method-override')
 const app = express()
 // initialize body parser and add it to app
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// override with POST having ?_method=DELETE or ?_method=PUT
+// now we can create the update method
+app.use(methodOverride('_method'))
 
 // initialize mongoose
 const mongoose = require('mongoose');
@@ -20,12 +25,6 @@ const Review = mongoose.model('Review', {
   rating: Number
 });
 
-// // mock array of movies
-// let reviews = [
-//     { title: "Great review", movieTitle: "Titanic" },
-//     { title: "Awesome movie", movieTitle: "Interstellar" },
-//     { title: "Poor quality", movieTitle: "Life of Pie" }
-// ]
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
@@ -52,15 +51,44 @@ app.get('/reviews/new', (req, res) => {
     res.render('reviews-new', {});
 })
 
+// SHOW
+// adding a template with an actual review object
+app.get('/reviews/:id', (req, res) => {
+    Review.findById(req.params.id).then((review) => {
+        res.render('reviews-show', { review: review })
+    }).catch((err) => {
+        console.log(err.message);
+    })
+})
+
 // CREATE
 app.post('/reviews', (req, res) => {
     // we use the method create() to create the review
     Review.create(req.body).then((review) => {
         console.log(review);
-        // then we redirect the root path to see the new review
-        res.redirect('/');
+        // then we redirect to reviews/:id
+        res.redirect(`/reviews/${review._id}`);
     }).catch((err) => {
         console.log(err.message);
+    })
+})
+
+// EDIT
+app.get('/reviews/:id/edit', (req, res) => {
+    Review.findById(req.params.id, function(err, review) {
+        res.render('reviews-edit', {review: review});
+    })
+})
+
+// UPDATE
+// it will receive requests with a PUT method
+app.put('/reviews/:id/', (req, res) => {
+    Review.findByIdAndUpdate(req.params.id, req.body)
+    .then(review => {
+        res.redirect(`/reviews/${review._id}`)
+    })
+    .catch(err => {
+        console.log(err.message)
     })
 })
 
