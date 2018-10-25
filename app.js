@@ -6,40 +6,22 @@ const methodOverride = require('method-override')
 const app = express()
 // initialize body parser and add it to app
 const bodyParser = require('body-parser');
+
+const Review = require('./models/review');
+const reviews = require('./controllers/reviews')(app, Review);
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // override with POST having ?_method=DELETE or ?_method=PUT
 // now we can create the update method
 app.use(methodOverride('_method'))
 
-// initialize mongoose
-const mongoose = require('mongoose');
-// connect to our database that is named after our app
-mongoose.connect('mongodb://localhost/rotten-potatoes');
 
-// model is capitalized and singular (models are stored on the database)
-const Review = mongoose.model('Review', {
-  title: String,
-  movieTitle: String,
-  description: String,
-  rating: Number
-});
 
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
-
-// we're using the database with the model: Review
-app.get('/', (req, res) => {
-    // .find() returns a Promise
-    Review.find()
-     .then(reviews => {
-         res.render('reviews-index', { reviews: reviews });
-     })
-     .catch(err => {
-         console.log(err);
-     })
-})
 
 app.get('/', (req, res) => {
     // extending the root route ('/') to render home.handlebars
@@ -96,6 +78,7 @@ app.put('/reviews/:id/', (req, res) => {
 app.delete('/reviews/:id', function (req, res) {
     console.log("DELETE review")
     Review.findByIdAndRemove(req.params.id).then((review) => {
+        // remove then redirect to the homepage
         res.redirect('/');
     }).catch((err) => {
         console.log(err.message);
@@ -105,3 +88,5 @@ app.delete('/reviews/:id', function (req, res) {
 app.listen(3000, () => {
     console.log('App listening on port 3000!')
 })
+
+module.exports = app;
