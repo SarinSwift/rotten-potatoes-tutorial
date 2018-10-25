@@ -5,8 +5,12 @@
 <!-- this is where we add a link to the Review page -->
 <a href="/reviews/new/">New Review</a>
 
-{{#each reviews}}
-    <h2><a href="/reviews/{{this._id}}">{{this.title}}</a></h2>
-    <small>{{this.movieTitle}}</small>
-    <!-- <small>{{this.description}}</small> -->
-{{/each}}
+<div class="row">
+    {{#each reviews}}
+        <div class="col-sm-3">
+            <h2><a href="/reviews/{{this._id}}">{{this.title}}</a></h2>
+            <small>{{this.movieTitle}}</small>
+            <!-- <small>{{this.description}}</small> -->
+        </div>
+    {{/each}}
+</div>

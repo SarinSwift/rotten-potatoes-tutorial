@@ -1,15 +1,19 @@
 <!-- views/reviews-new.handlebars -->
 
-<!-- has attribute called action that has a value equal to the path -->
-<!-- /reviews is the route to our create action that will be added to our server  -->
-<form method="POST" action="/reviews">
 
-    <!-- DRY code -->
-    {{> reviews-form}}
 
-    <!-- BUTTON -->
-    <p>
-        <button type="submit">Save review</button>
-    </p>
-
-</form>
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <!-- has attribute called action that has a value equal to the path -->
+        <!-- /reviews is the route to our create action that will be added to our server  -->
+        <form method="POST" action="/reviews">
+            <!-- DRY CODE -->
+            {{> reviews-form}}
+            
+            <!-- BUTTON -->
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Save Review</button>
+            </div>
+        </form>
+    </div>
+</div>
