@@ -4,6 +4,9 @@ var exphbs = require('express-handlebars');
 const express = require('express')
 const methodOverride = require('method-override')
 const app = express()
+const port = process.env.PORT || 3000;
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/rotten-potatoes');
 // initialize body parser and add it to app
 const bodyParser = require('body-parser');
 
@@ -85,8 +88,10 @@ app.delete('/reviews/:id', function (req, res) {
     })
 })
 
-app.listen(3000, () => {
-    console.log('App listening on port 3000!')
-})
+
+app.listen(port);
+// app.listen(3000, () => {
+//     console.log('App listening on port 3000!')
+// })
 
 module.exports = app;
