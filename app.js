@@ -11,11 +11,12 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/rotten-potatoes
 const bodyParser = require('body-parser');
 
 const Review = require('./models/review');
-const reviews = require('./controllers/reviews')(app, Review);
+// const reviews = require('./controllers/reviews')(app, Review);
+const Comment = require('./models/comment');
+// const comments = require('./controllers/comments')(app);
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
 // override with POST having ?_method=DELETE or ?_method=PUT
 // now we can create the update method
 app.use(methodOverride('_method'))
@@ -26,9 +27,19 @@ app.use(methodOverride('_method'))
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
+// app.get('/', (req, res) => {
+//     // extending the root route ('/') to render home.handlebars
+//     res.render('home', { msg: 'Handlebars are Cool!' });
+// })
+
 app.get('/', (req, res) => {
-    // extending the root route ('/') to render home.handlebars
-    res.render('home', { msg: 'Handlebars are Cool!' });
+  Review.find()
+    .then(reviews => {
+      res.render('reviews-index', { reviews: reviews });
+    })
+    .catch(err => {
+      console.log(err);
+    })
 })
 
 // making a route to /reviews/new and have it render a template called reviews-new
@@ -39,12 +50,17 @@ app.get('/reviews/new', (req, res) => {
 // SHOW
 // adding a template with an actual review object
 app.get('/reviews/:id', (req, res) => {
-    Review.findById(req.params.id).then((review) => {
-        res.render('reviews-show', { review: review })
+    // find review
+    Review.findById(req.params.id).then(review => {
+        // fetch its comments
+        Comment.find({ reviewId: req.params.id }).then(comments => {
+            // respond with the template with both values
+            res.render('reviews-show', { review: review, comments: comments })
+        })
     }).catch((err) => {
-        console.log(err.message);
-    })
-})
+        console.log(err.message)
+    });
+});
 
 // CREATE
 app.post('/reviews', (req, res) => {
@@ -88,6 +104,20 @@ app.delete('/reviews/:id', function (req, res) {
     })
 })
 
+// // CREATE Comment
+// app.post('/reviews/comments', (req, res) => {
+//     Comment.create(req.body).then(comment => {
+//         res.redirect(`/reviews/${comment.reviewId}`);
+//     }).catch((err) => {
+//         console.log(err.message);
+//     });
+// });
+
+var reviewRoutes = require('./controllers/reviews')
+var commentRoutes = require('./controllers/comments')
+
+reviewRoutes(app, Review);
+commentRoutes(app, Comment);
 
 app.listen(port);
 // app.listen(3000, () => {
